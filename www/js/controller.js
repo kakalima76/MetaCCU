@@ -70,6 +70,10 @@ angular.module('starter.controllers', [])
           $scope.lista = [];
       }
 
+      $scope.exit = function(){
+        return navigator.app.exitApp()
+      }
+
 })
 
 .controller('assentamentoCtrl', function($scope){

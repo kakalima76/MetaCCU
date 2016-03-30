@@ -4,38 +4,44 @@
     </ion-header-bar>
       <ion-content>
 
+
+      <div class="list">
 	    	<label class="item item-input item-select">
-                <div class="input-label">
-                Procedimento:
-                </div>
-                    <select ng-model="acao"  id="procedimento">
-                        <option>chamado</option>
-                        <option>ouvidoria</option>
-                        <option>1746</option>
-                        <option>processo</option>
-                    </select>
-            </label>
-
-
-      	<div class="list">
-				<label class="item item-input" >
-		        <input id="chamado" type="text" placeholder="número" ng-model="chamado">
-		        </label>
-		        <label class="item item-input item-select">
+          <div class="input-label">
+          Procedimento:
+          </div>
+          <select ng-model="aco"  id="procedimento">
+            <option>ouvidoria</option>
+            <option>1746</option>
+            <option>processo</option>
+            <option>ofício</option>
+          </select>
+        </label>
+        <label class="item item-input item-select">
                 <div class="input-label">
                 Ação:
                 </div>
                     <select ng-model="acao"  id="acao">
-                        <option>apreensão</option>
-                        <option>interdição</option>
-                        <option>notificação</option>
+                        <option>autorizado e autuado</option>
+                        <option>autorizado e notificado</option>
+                        <option>autorizado em conformidade</option>
+                        <option>autorizado e apreendido </option>
+                        <option>irregular e autuado</option>
+                        <option>irregular e notificado</option>
+                        <option>irregular e apreendido </option>
                         <option>não localizado</option>
                     </select>
+
+
+            <!-- textbox de entrada do número do serviço-->        
+            </label>
+            <label class="item item-input" >
+            <input id="chamado" type="text" placeholder="número" ng-model="chamado">
             </label>
 
-	    </div>
+      </div>
 
-	    	
+   	
 		    <button class="button button-full button-assertive" ng-click="show()">
 		    salvar
 		    </button>
@@ -48,18 +54,13 @@
 		    novo
 		    </button>
 
+        <div class="tabs tabs-icon-only" ui-sref='assentamento'>
+        <a class="tab-item">
+        <i class="icon ion-ios-people"></i>
+        </a>
+        </div>
+
       </ion-content>
+
     </ion-pane>
 
-    <ion-tabs class="tabs-positive tabs-icon-top">
-
-  <ion-tab title="Assentamento" icon-on="ion-ios-people" icon-off="ion-ios-people" ui-sref='assentamento'>>
-    <!-- Tab 1 content -->
-  </ion-tab>
-
-  <ion-tab title="Procedimento" icon-on="ion-android-call" icon-off="ion-android-call" ui-sref='procedimento'>
-    <!-- Tab 2 content -->
-  </ion-tab>
-
- 
-</ion-tabs>
