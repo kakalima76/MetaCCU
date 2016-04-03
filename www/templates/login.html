@@ -2,17 +2,17 @@
 
 	<ion-pane>
     <ion-header-bar class="bar bar-header bar-positive">
-    	<h1 class="title">Gerência de Operações</h1>
+    	<h1 class="title"><center>Gerência de Operações</center></h1>
     </ion-header-bar>
       <ion-content>
 	      <div class="list list-inset">
 				<label class="item item-input">
-		        <input type="text" placeholder="usuário">
+		        <input id='usuario' type="text" placeholder="usuário">
 		        </label>
 		        <label class="item item-input">
-		        <input type="password" placeholder="senha">
+		        <input id='senha' type="password" placeholder="senha">
 		        </label>
-		        <button class="button button-full button-assertive" ui-sref='procedimento'>
+		        <button class="button button-full button-assertive" ng-click='entrar()'>
 		        Entrar
 		        </button>
 	    	</div>

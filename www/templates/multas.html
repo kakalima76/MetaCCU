@@ -1,6 +1,6 @@
 <ion-pane>
     <ion-header-bar class="bar bar-header bar-positive">
-      <h1 class="title">Infrações</h1>
+      <h1 class="title"><center>{{titulo}}</center></h1>
     </ion-header-bar>
       <ion-content>
         <div class="list">
@@ -35,15 +35,12 @@
                         <option>XIII</option>
                     </select>
             </label>
-        </div>
-       
-        
+        </div>     
 
-        <div id="lista">
-            <ul class="list">
-                <li class="item" ng-repeat="l in lista">Artigo: {{l.artigo}} Inciso: {{l.inciso}}</li>
-            </ul>            
-        </div>
+        <div class="multas">{{lista.artigo}}</div>
+        <div class="multas">{{lista.texto}}</div>
+        <div class="multas">{{lista.valor}}</div>
+        <div class="multas">{{lista.pontos}}</div>
 
 
         <button class="button button-full button-assertive" ng-click="add()">
@@ -59,12 +56,14 @@
         limpar
         </button>
 
+        
+        
+      </ion-content>
+
         <div class="tabs tabs-icon-only" ui-sref='assentamento'>
         <a class="tab-item">
         <i class="icon ion-reply-all"></i>
         </a>
         </div>
-        
-      </ion-content>
     
     </ion-pane>

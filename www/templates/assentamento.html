@@ -1,6 +1,6 @@
 <ion-pane>
     <ion-header-bar class="bar bar-header bar-positive">
-      <h1 class="title">Assentamento</h1>
+      <h1 class="title"><center>ORDEM DE SERVIÇO Nº {{titulo}}</center></h1>
     </ion-header-bar>
     <div></div>
       <ion-content>
@@ -11,7 +11,7 @@
             </label>
 
 
-            <button class="button button-full button-assertive" ng-click='buscar()'>
+            <button class="button button-full button-assertive" ng-click='buscar()' ng-disabled='proteger'>
             buscar
             </button>
             
@@ -20,26 +20,48 @@
             </button>
 
             <label class="item item-input">
-                <input type="text" id="nome" ng-model="nome">
+                <input type="text" id="titular" ng-model="titular" placeholder="nome do titular" ng-disabled='proteger'>
             </label>
 
-            <ion-list>
-            <ion-radio ng-model="choice" ng-value="'A'">Conformidade</ion-radio>
-            <ion-radio ng-model="choice" ng-value="'B'">Inconformidade</ion-radio>
-            </ion-list>
+            <label class="item item-input">
+                <input type="text" id="preposto" ng-model="preposto" placeholder="nome do preposto" ng-disabled='proteger'>
+            </label>
 
-            <button class="button button-full button-assertive" ui-sref='multas'>
-            Lançar infraçao
+            <label class="item item-input">
+                <input type="text" id="situacao" ng-model="situacao" placeholder="situação" ng-disabled='proteger'>
+            </label>
+
+            <div class="list">
+
+                <label class="item item-input item-select">
+                    <div class="input-label">
+                        Status
+                    </div>
+
+                            <select ng-model="status" id="status" ng-change='selecionar()'>
+                            <option selected=""></option>
+                            <option>CONFORMIDADE</option>
+                            <option>INCONFORMIDADE</option>
+                            </select>
+
+                </label>
+            </div>
+
+            <button class="button button-full button-assertive"  ng-show='clickInconformidade' ng-click='multar()'>
+            Lançar infração
             </button>
 
+            <button class="button button-full button-assertive" ng-show='clickConformidade' ng-click='novaFiscalizacao()'>
+            Nova fiscalização
+            </button>
+
+            <button class="button button-full button-assertive" ng-show='clickEncerrar' ng-click='encerrar()'>
+            Encerrar
+            </button>
+
+
         </div>
 
-        <div class="tabs tabs-icon-only" ui-sref='procedimento'>
-        <a class="tab-item">
-        <i class="icon ion-android-call"></i>
-        </a>
-        </div>
 
-      </ion-content>
     </ion-pane>
 
