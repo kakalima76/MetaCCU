@@ -45,19 +45,17 @@ angular.module('starter.controllers', [])
 
 })*/
 
-.controller('multasCtrl', ['$scope', 'factoryAutorizado', '$state', 'tipificaService', function($scope, factoryAutorizado, $state, tipificaService){
+.controller('multasCtrl', ['$scope', 'factoryAutorizado', '$state', 'tipificaService', 'loginFactory', function($scope, factoryAutorizado, $state, tipificaService, loginFactory){
       $scope.titulo = 'INSC. MUNICIPAL: ' + factoryAutorizado.getIM();
       $scope.lista = '';
       $scope.multa = '';
-
-      //{artigo: '47', inciso: 'I',   texto: 'mercadejar sem autorização: dez', valor: 'R$ 783,00', pontos: 2}
 
       $scope.add = function(){
           var artigo = document.getElementById("artigo").value;
           var inciso = document.getElementById("inciso").value;
           var informa = tipificaService.listar(artigo, inciso);
           if(informa.length > 0){
-            $scope.multa = {artigo: artigo, inciso: inciso}
+            $scope.multa = '(artigo: ' + artigo   + ' inciso: ' + inciso + ')';
             $scope.lista = 
             {
                 artigo: 'Artigo: ' + artigo + ' Inciso: ' + inciso,
@@ -71,15 +69,15 @@ angular.module('starter.controllers', [])
       }
 
       $scope.clear = function(){
-           $scope.multa = '';
-           $scope.lista = '';
+          loginFactory.criar(factoryAutorizado.get());
+          $scope.multa = '';
+          $scope.lista = '';
+          $state.go('assentamento');
       }
 
       $scope.confirm = function(){
           factoryAutorizado.setMulta($scope.multa);
-          alert("Inseridas com sucesso.");
-          $scope.clear();         
-
+          alert("Inseridas com sucesso.");       
       }
 
       $scope.exit = function(){
@@ -89,44 +87,19 @@ angular.module('starter.controllers', [])
 
 }])
 
-.controller('loginCtrl', ['$scope', 'factoryAgente', '$state', function($scope, factoryAgente, $state){
-  var agentes = 
-     [
-        {nome: 'nieraldo', matricula: '2436723', ordem: 9560, dia: '04/04/2016', senha: '244265'},
-        {nome: 'augusto', matricula: '2436582', ordem: 9561, dia: '04/04/2016', senha: '102442'}
-     ];
-
-     var login = function(value){
-          if ((value.matricula === document.getElementById('usuario').value) && (value.senha === document.getElementById('senha').value))
-          {
-            return true;
-          }
-     }//fim do método login
-
-
-
+.controller('loginCtrl', ['$scope',  '$state', 'loginFactory', function($scope, $state, loginFactory){
     $scope.entrar = function(){
-      var logado = agentes.filter(login);
-                
-          if(logado.length)
-          {
-            factoryAgente.set(logado[0].nome, logado[0].matricula, logado[0].ordem, logado[0].dia);
-            $state.go('assentamento');
-
-          }else{
-            alert('usuario ou senha incorretos!')
-          }
-      }//fim do método entrar
+      loginFactory.logar();             
+    }//fim do método entrar
   
 }])
 
-.controller('assentamentoCtrl', ['$scope', 'factoryAgente', 'factoryAutorizado', '$state', 'tipificaService', function($scope, factoryAgente, factoryAutorizado, $state, tipificaService){
+.controller('assentamentoCtrl', ['$scope', 'factoryAutorizado', '$state', 'tipificaService', 'loginFactory', 'factoryAgente', function($scope,  factoryAutorizado, $state, tipificaService, loginFactory, factoryAgente){
       $scope.titulo = factoryAgente.getOrdem();
       $scope.clickInconformidade = false;
       $scope.clickConformidade = false;
       $scope.clickEncerrar = true;
       
-
     $scope.buscar = function(){
 
         document.getElementById('titular').value = 'carregando...'
@@ -145,7 +118,7 @@ angular.module('starter.controllers', [])
       document.getElementById("titular").value = '';
       document.getElementById("preposto").value = '';
       document.getElementById('situacao').value = '';
-      console.log(factoryAutorizado.get());
+      
     };//fim do método limpar
 
     $scope.selecionar = function(){
@@ -166,24 +139,50 @@ angular.module('starter.controllers', [])
         }
     };//fim do método selecionar
 
+    var conformidade = function(){
+      //vou aproveitar e atualizar o logado no objeto autorizado
+      
+      var flag;
+      if(document.getElementById('status').value === 'INCONFORMIDADE'){
+        flag = false;
+        factoryAutorizado.setEstado(flag);
+      }else{
+        flag = true;
+        factoryAutorizado.setEstado(flag);
+        
+      }
+
+    }//fim dda função conformidade
+
+    var logado = function(){
+        var usuario = factoryAgente.get();
+        factoryAutorizado.setNome(usuario.nome);
+        factoryAutorizado.setMatricula(usuario.matricula);
+        factoryAutorizado.setOrdem(usuario.ordem);
+        factoryAutorizado.setData(usuario.data);
+
+    }
+
     $scope.novaFiscalizacao = function(){
-      $scope.clickInconformidade = false;
-      $scope.clickConformidade = false;
-      $scope.status = 'cal';
+      logado();
+      conformidade();
       $scope.limpar();
+      loginFactory.criar(factoryAutorizado.get());
     };//fim do método novaFiscalização
 
     $scope.multar = function(){
-      //teste
+      logado();
+      conformidade();
       $state.go('multas');      
     };//fim do método multar
 
     $scope.testar = function(){
       //teste
-        console.log(tipificaService.listar('47', 'XIII'))
+        //loginFactory.logar();
     };//fim do método testar
 
     $scope.encerrar = function(){
+      $state.go('login');
       ionic.Platform.exitApp();
     }
 
@@ -192,11 +191,12 @@ angular.module('starter.controllers', [])
 
 .factory('factoryAgente', function(){
  
-    var agente = {nome: '', matricula: '', ordem: 0, dia: ''};
+    var agente = {nome: '', matricula: '', ordem: 0, data: ''};
      
     var get = function(){
       return agente;
     };
+
 
     var getOrdem = function(){
       return agente.ordem;
@@ -216,14 +216,34 @@ angular.module('starter.controllers', [])
 .factory('factoryAutorizado', function(){
    var autorizado = 
     {
+      nome: '', 
+      matricula: '', 
+      ordem: 0, 
+      data: '',
       im: '',
-      titular: 'cuzetao',
+      titular: '',
       preposto: '',
       cpf: '',
       local: '',
       situacao: '',
       conformidade: false,
       multas: []
+    }
+
+    var setNome = function(value){
+      return autorizado.nome = value;
+    }
+
+    var setMatricula = function(value){
+      return autorizado.matricula = value;
+    }
+
+    var setOrdem = function(value){
+      return autorizado.ordem = value;
+    }
+
+    var setData = function(value){
+      return autorizado.data = value;
     }
 
     var extrair = function(value){
@@ -268,15 +288,30 @@ angular.module('starter.controllers', [])
 
 
     var set = function(im, titular, preposto, cpf, local, situacao, conformidade){
-      return autorizado = {im: im, titular: titular, preposto: preposto, cpf: cpf, local: local, situacao: situacao, conformidade: conformidade, multas: []}
+      return autorizado =
+      {
+        nome: '',
+        matricula: '',
+        ordem: 0,
+        data: '',
+        im: im, 
+        titular: titular, 
+        preposto: preposto, 
+        cpf: cpf, 
+        local: local, 
+        situacao: situacao, 
+        conformidade: conformidade, 
+        multas: ''}
     }
 
-    var setEstado = function(value){
-      return autorizado.conformidade = value;
+    var setEstado = function(value, nome, matricula, ordem, data){
+      return  autorizado.conformidade = value;
+
     }
 
     var setMulta = function(value){
-      return autorizado.multas.push(value);
+      var aux = get();
+      return (aux.multas += value).trim();
     }
 
     var get = function(){
@@ -294,6 +329,10 @@ angular.module('starter.controllers', [])
     return {
       get: get,
       set: set,
+      setNome: setNome,
+      setMatricula: setMatricula,
+      setOrdem: setOrdem,
+      setData: setData,
       extrair: extrair,
       setEstado: setEstado,
       setMulta: setMulta,

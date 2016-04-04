@@ -42,5 +42,60 @@ angular.module('starter.service', [])
 			return multa;
         }
 
-});
+}).
+
+factory('loginFactory', ['$http', 'factoryAgente', '$state', function($http, factoryAgente, $state){
+    var agentes = '';
+    var get = function(){
+      return agentes;
+    }
+
+    var set = function(value){
+      return agentes = value;
+    }
+
+    var logar = function(){
+      var agentes;
+      var logado;
+
+
+      $http.get('http://ccuanexos.herokuapp.com/agentes/').then(function(res){
+      var agentes = res.data;
+      var login = function(value){
+          if ((value.matricula === document.getElementById('usuario').value) && (value.senha === document.getElementById('senha').value))
+          {
+            return true;
+          }
+     }//fim do método login
+
+     logado = agentes.filter(login);
+     if(logado.length)
+      {
+        factoryAgente.set(logado[0].nome, logado[0].matricula, logado[0].ordem, logado[0].data);
+        $state.go('assentamento');
+        }else{
+        alert('usuario ou senha incorretos!')
+      }
+
+      }), function(err){
+        console.error('Erro');
+      }
+
+    }//fim do método logar
+
+    var criar = function(data){
+      $http.post('http://ccuanexos.herokuapp.com/vistorias/', data).then(function(res){
+        //console.log(res.data)
+      }), function(err){
+        alert('Sem conexão!!!');
+      }
+    }//fim do método criar
+
+    return {
+      logar: logar,
+      get: get,
+      set: set,
+      criar: criar
+    }
+}]);
 
