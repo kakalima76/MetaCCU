@@ -6,7 +6,6 @@ angular.module('starter.service', [])
 
             var multas = 
           [
-            {artigo: '47', inciso: 'I', 	texto: 'Mercadejar sem autorização.', valor: 'R$ 783,00', pontos: 2},
             {artigo: '47', inciso: 'II', 	texto: 'Mercadejar em desacordo com os termos de sua autorização.', valor: 'R$ 391,50', pontos: 2},
             {artigo: '47', inciso: 'III', 	texto: 'Não se apresentar em rigorosas condições de asseio.', valor: 'R$ 391,50', pontos: 2},
             {artigo: '47', inciso: 'IV', 	texto: 'Apresentar-se em veículo ou unidade autorizada em mau estado de conservação ou em condições precárias de higiene.', valor: 'R$ 783,00', pontos: 2},
@@ -14,19 +13,19 @@ angular.module('starter.service', [])
             {artigo: '47', inciso: 'VI', 	texto: 'Utilizar buzinas, campainhas e outros meios ruidosos de propaganda.', valor: 'R$ 391,50', pontos: 2},
             {artigo: '47', inciso: 'VII', 	texto: 'Não apresentar, quando exigidos, quaisquer dos documentos a que se refere o artigo 56 desta Lei.', valor: 'R$ 391,50', pontos: 2},
             {artigo: '47', inciso: 'VIII', 	texto: 'Não manter, em local visível, a tabela de preços dos produtos comercializados exigida pelo art. 57 desta Lei.', valor: 'R$ 391,50', pontos: 2},
-            {artigo: '47', inciso: 'IX', 	texto: 'Comercializar produtos proibidos por esta Lei.', valor: 'R$ ', pontos: 2},
-            {artigo: '47', inciso: 'X', 	texto: 'Perturbação da ordem pública, falta de urbanidade, incontinência pública.', valor: 'R$ 1566,00', pontos: 2},
-            {artigo: '47', inciso: 'XI', 	texto: 'Uso de caixotes como assento ou para exposição de mercadoria sobre o passeio.', valor: 'R$ 391,50', pontos: 2},
-            {artigo: '47', inciso: 'XII', 	texto: 'Prejuízo do fluxo de pedestre na calçada.', valor: 'R$ 783,0', pontos: 2},
+            {artigo: '47', inciso: 'IX', 	texto: 'Comercializar produtos proibidos por esta Lei.', valor: 'R$ ', pontos: 5},
+            {artigo: '47', inciso: 'X', 	texto: 'Perturbação da ordem pública, falta de urbanidade, incontinência pública.', valor: 'R$ 1566,00', pontos: 5},
+            {artigo: '47', inciso: 'XI', 	texto: 'Uso de caixotes como assento ou para exposição de mercadoria sobre o passeio.', valor: 'R$ 391,50', pontos: 5},
+            {artigo: '47', inciso: 'XII', 	texto: 'Prejuízo do fluxo de pedestre na calçada.', valor: 'R$ 783,0', pontos: 5},
             {artigo: '47', inciso: 'XIII', 	texto: 'Ocupação não autorizada de área pública por qualquer equipamento fixo ou móvel diferente de tabuleiro, carrocinha e triciclo.', valor: 'R$ 3915,00', pontos: 2},
-            {artigo: '54', inciso: 'I', 	texto: 'Perturbação da ordem pública, falta de urbanidade, incontinência pública, prática de crime ou contravenção no local do ponto fixo.', valor: 'R$ ', pontos: 5},
-            {artigo: '54', inciso: 'II', 	texto: 'Permanência em local diferente do autorizado.', valor: 'R$ ', pontos: 5},
-            {artigo: '54', inciso: 'III', 	texto: 'Mudança do ponto fixo sem prévia autorização.', valor: 'R$ ', pontos: 5},
-            {artigo: '54', inciso: 'IV', 	texto: 'Inobservância do Regulamento Sanitário.', valor: 'R$ ', pontos: 5},
-            {artigo: '54', inciso: 'V', 	texto: 'Uso de caixotes como assento ou para exposição de mercadorias sobre o passeio.', valor: 'R$ ', pontos: 5},
-            {artigo: '54', inciso: 'VI', 	texto: 'Impedimento do livre trânsito nos passeios.', valor: 'R$ ', pontos: 5},
-            {artigo: '54', inciso: 'VII', 	texto: 'Venda de mercadoria não permitida nesta Lei.', valor: 'R$ ', pontos: 5},
-            {artigo: '54', inciso: 'VIII', 	texto: 'Venda de mercadoria não autorizada.', valor: 'R$ ', pontos: 5}
+            {artigo: '54', inciso: 'I', 	texto: 'Perturbação da ordem pública, falta de urbanidade, incontinência pública, prática de crime ou contravenção no local do ponto fixo.', valor: 'R$ R$ 391,50', pontos: 5},
+            {artigo: '54', inciso: 'II', 	texto: 'Permanência em local diferente do autorizado.', valor: 'R$ R$ 391,50', pontos: 5},
+            {artigo: '54', inciso: 'III', 	texto: 'Mudança do ponto fixo sem prévia autorização.', valor: 'R$ R$ 391,50', pontos: 5},
+            {artigo: '54', inciso: 'IV', 	texto: 'Inobservância do Regulamento Sanitário.', valor: 'R$ R$ 391,50', pontos: 5},
+            {artigo: '54', inciso: 'V', 	texto: 'Uso de caixotes como assento ou para exposição de mercadorias sobre o passeio.', valor: 'R$ R$ 391,50', pontos: 5},
+            {artigo: '54', inciso: 'VI', 	texto: 'Impedimento do livre trânsito nos passeios.', valor: 'R$ R$ 391,50', pontos: 5},
+            {artigo: '54', inciso: 'VII', 	texto: 'Venda de mercadoria não permitida nesta Lei.', valor: 'R$ R$ 391,50', pontos: 5},
+            {artigo: '54', inciso: 'VIII', 	texto: 'Venda de mercadoria não autorizada.', valor: 'R$ R$ 391,50', pontos: 5}
           ];
 
 
@@ -42,9 +41,9 @@ angular.module('starter.service', [])
 			return multa;
         }
 
-}).
+})
 
-factory('loginFactory', ['$http', 'factoryAgente', '$state', function($http, factoryAgente, $state){
+.factory('loginFactory', ['$http', 'factoryAgente', '$state', function($http, factoryAgente, $state){
     var agentes = '';
     var get = function(){
       return agentes;
@@ -61,8 +60,16 @@ factory('loginFactory', ['$http', 'factoryAgente', '$state', function($http, fac
 
       $http.get('http://ccuanexos.herokuapp.com/agentes/').then(function(res){
       var agentes = res.data;
+      var data = new Date();
+      var dia = data.getDate().toString();
+      var mes = data.getMonth().toString();
+      var ano = data.getFullYear().toString();
+      var dia = (dia+mes+ano);
+
       var login = function(value){
-          if ((value.matricula === document.getElementById('usuario').value) && (value.senha === document.getElementById('senha').value))
+          if ((value.matricula === document.getElementById('usuario').value) 
+            && (value.senha === document.getElementById('senha').value)
+            && (value.data === dia))
           {
             return true;
           }
@@ -97,5 +104,66 @@ factory('loginFactory', ['$http', 'factoryAgente', '$state', function($http, fac
       set: set,
       criar: criar
     }
-}]);
+}])
 
+.factory('factoryLocaliza', ['$cordovaGeolocation', function($cordovaGeolocation){
+  var local = 
+  {
+      latitude: '',
+      longitude: '',
+      hora: ''
+  }
+
+  var set = function(latitude, longitude, hora){
+      return local = 
+      {
+        latitude: latitude,
+        longitude: longitude,
+        hora: hora
+      }
+  }
+
+  var get = function(){
+    return local;
+  }
+
+  var localiza = function(){
+      var posOptions = {timeout: 10000, enableHighAccuracy: true}
+      $cordovaGeolocation
+      .getCurrentPosition(posOptions)
+      .then(function (position)
+      {
+          var lat  = position.coords.latitude
+          var long = position.coords.longitude
+          var data = Date();
+          set(lat, long, data);
+         
+      }, function(err) {console.log('Impossível geolocalizar.');})
+  }
+
+  return {
+    set: set,
+    get: get,
+    localiza: localiza
+  }
+
+
+}])
+
+.factory('factoryPontos', [function(){
+    var pontos = 0;
+
+    var setPontos = function(value){
+      return pontos = value;
+    }
+
+    var getPontos = function(){
+      return pontos;
+    }
+
+    return {
+      setPontos: setPontos,
+      getPontos: getPontos
+    }
+
+}])

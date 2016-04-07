@@ -1,51 +1,6 @@
 angular.module('starter.controllers', [])
-/*
-.controller('chamadoCtrl', function($scope, $cordovaGeolocation) {
 
-	$scope.hide = true;
-  
-
-  $scope.show = function(){
-  $scope.hide = false;
-  $scope.data = Date(); 
-  document.getElementById("titulo").innerHTML = "<center>data e horário da fiscalização</center>";           
-
-            var posOptions = {timeout: 10000, enableHighAccuracy: false};
-            $cordovaGeolocation
-              .getCurrentPosition(posOptions)
-              .then(function (position) {
-                var lat  = position.coords.latitude
-                var long = position.coords.longitude
-                var latLng = new google.maps.LatLng(lat, long);
-                var mapOptions = {
-                	center: latLng,
-                	zoom: 15,
-                	mapTypeId: google.maps.MapTypeId.ROADMAP
-                }
-
-                $scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
-
-
-              }, function(err) {
-                // error
-          });
-    
-     }//function show end
-
-
-      $scope.reload = function(){
-      $scope.hide = true;
-      document.getElementById("map").innerHTML = "";
-      document.getElementById("titulo").innerHTML = "";
-      document.getElementById("chamado").value = "";
-      $scope.data = '';
-
-      }
-
-
-})*/
-
-.controller('multasCtrl', ['$scope', 'factoryAutorizado', '$state', 'tipificaService', 'loginFactory', function($scope, factoryAutorizado, $state, tipificaService, loginFactory){
+.controller('multasCtrl', ['$scope', 'factoryAutorizado', '$state', 'tipificaService', 'loginFactory', 'factoryPontos', function($scope, factoryAutorizado, $state, tipificaService, loginFactory, factoryPontos){
       $scope.titulo = 'INSC. MUNICIPAL: ' + factoryAutorizado.getIM();
       $scope.lista = '';
       $scope.multa = '';
@@ -55,6 +10,7 @@ angular.module('starter.controllers', [])
           var inciso = document.getElementById("inciso").value;
           var informa = tipificaService.listar(artigo, inciso);
           if(informa.length > 0){
+            $scope.pontos = informa[0].pontos;
             $scope.multa = '(artigo: ' + artigo   + ' inciso: ' + inciso + ')';
             $scope.lista = 
             {
@@ -68,16 +24,25 @@ angular.module('starter.controllers', [])
 
       }
 
-      $scope.clear = function(){
+      $scope.clear = function(){//atual savalr()
           loginFactory.criar(factoryAutorizado.get());
           $scope.multa = '';
           $scope.lista = '';
           $state.go('assentamento');
+          console.log(factoryAutorizado.get())
       }
 
       $scope.confirm = function(){
-          factoryAutorizado.setMulta($scope.multa);
-          alert("Inseridas com sucesso.");       
+          var artigo = document.getElementById("artigo").value;
+          var inciso = document.getElementById("inciso").value;
+          var informa = tipificaService.listar(artigo, inciso);
+          if(informa.length > 0){
+            $scope.pontos += factoryPontos.getPontos();
+            factoryPontos.setPontos($scope.pontos);
+            factoryAutorizado.setMulta($scope.multa);
+            factoryAutorizado.setPontos($scope.pontos);
+            alert("Inseridas com sucesso.");       
+          }
       }
 
       $scope.exit = function(){
@@ -94,7 +59,7 @@ angular.module('starter.controllers', [])
   
 }])
 
-.controller('assentamentoCtrl', ['$scope', 'factoryAutorizado', '$state', 'tipificaService', 'loginFactory', 'factoryAgente', function($scope,  factoryAutorizado, $state, tipificaService, loginFactory, factoryAgente){
+.controller('assentamentoCtrl', ['$scope', 'factoryAutorizado', '$state', 'tipificaService', 'loginFactory', 'factoryAgente', 'factoryLocaliza', 'factoryPontos', function($scope,  factoryAutorizado, $state, tipificaService, loginFactory, factoryAgente, factoryLocaliza, factoryPontos){
       $scope.titulo = factoryAgente.getOrdem();
       $scope.clickInconformidade = false;
       $scope.clickConformidade = false;
@@ -107,6 +72,7 @@ angular.module('starter.controllers', [])
         document.getElementById('preposto').value =  'carregando...'
 
           factoryAutorizado.extrair(document.getElementById('im').value);
+          factoryLocaliza.localiza();
           $scope.proteger = true;
 
 
@@ -155,11 +121,15 @@ angular.module('starter.controllers', [])
     }//fim dda função conformidade
 
     var logado = function(){
+        var local = factoryLocaliza.get();
         var usuario = factoryAgente.get();
         factoryAutorizado.setNome(usuario.nome);
         factoryAutorizado.setMatricula(usuario.matricula);
         factoryAutorizado.setOrdem(usuario.ordem);
         factoryAutorizado.setData(usuario.data);
+        factoryAutorizado.setLatitude(local.latitude);
+        factoryAutorizado.setLongitude(local.longitude);
+        factoryAutorizado.sethoraAutuacao(local.hora);
 
     }
 
@@ -171,6 +141,8 @@ angular.module('starter.controllers', [])
     };//fim do método novaFiscalização
 
     $scope.multar = function(){
+      $scope.multas = 0;
+      factoryPontos.setPontos(0);
       logado();
       conformidade();
       $state.go('multas');      
@@ -227,7 +199,23 @@ angular.module('starter.controllers', [])
       local: '',
       situacao: '',
       conformidade: false,
-      multas: []
+      multas: '',
+      latitude: '',
+      longitude: '',
+      horaAutuacao: '',
+      pontos: 0
+    }
+
+    var setLatitude = function(value){
+      return autorizado.latitude = value;
+    }
+
+    var setLongitude = function(value){
+      return autorizado.longitude = value;
+    }
+
+    var sethoraAutuacao = function(value){
+      return autorizado.horaAutuacao = value;
     }
 
     var setNome = function(value){
@@ -258,16 +246,18 @@ angular.module('starter.controllers', [])
                                 var regexCPF = /CPF(\w)+/g;
                                 var regexLocal = /Local(\D)+(nº)?/g;
                                 var regexStatus = /Situa(.)+(\s)+TITULAR/g
+                                var regexTuap = /[0-9]{2}-[0-9]{2}-[0-9]{4}[0-9]{2}-[0-9]{2}-[0-9]{4}/g
                                 var nome = headline.match(regexTitular);
                                 var cpfTitular = headline.match(regexCPF)
                                 var localTitular = headline.match(regexLocal);
                                 var statusTitular = headline.match(regexStatus);
+                                var tuap = headline.match(regexTuap);
                                   if(nome){
                                       document.getElementById('titular').value = nome[0].replace('Nome', '').replace('Data', '').trim();
                                       var titular = nome[0].replace('Nome', '').replace('Data', '').trim();
                                       var cpf = cpfTitular[0].replace('CPF', '').trim();
                                       var local = localTitular[0].replace('Local', '').replace('nº', '').trim();
-                                      var situacao = statusTitular[0].replace('Situação', '').replace('TITULAR', '').trim();
+                                      var situacao = statusTitular[0].replace('Situação', '').replace('TITULAR', '').trim() + ' (ÚLT. TUAP PAGA: ' + tuap[0].substring(10,20)+')';
                                       document.getElementById('situacao').value = situacao;
                                       
                                            if(nome[01]){
@@ -301,7 +291,20 @@ angular.module('starter.controllers', [])
         local: local, 
         situacao: situacao, 
         conformidade: conformidade, 
-        multas: ''}
+        multas: '',
+        latitude: '',
+        longitude: '',
+        horaAutuacao: '',
+        pontos: 0
+      }
+    }
+
+    var setPontos = function(value){
+      return autorizado.pontos = value;
+    }
+
+    var getPontos = function(){
+      return autorizado.pontos;
     }
 
     var setEstado = function(value, nome, matricula, ordem, data){
@@ -337,7 +340,12 @@ angular.module('starter.controllers', [])
       setEstado: setEstado,
       setMulta: setMulta,
       getIM: getIM,
-      getStatus: getStatus
+      getStatus: getStatus,
+      setLatitude: setLatitude,
+      setLongitude: setLongitude,
+      sethoraAutuacao: sethoraAutuacao,
+      getPontos: getPontos,
+      setPontos: setPontos
     }
 
 });
