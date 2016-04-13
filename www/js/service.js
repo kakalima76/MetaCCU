@@ -61,9 +61,22 @@ angular.module('starter.service', [])
       $http.get('http://ccuanexos.herokuapp.com/agentes/').then(function(res){
       var agentes = res.data;
       var data = new Date();
-      var dia = data.getDate().toString();
-      var mes = data.getMonth().toString();
+      var dia = data.getDate();
+      var mes = data.getMonth();
       var ano = data.getFullYear().toString();
+
+      if(dia < 10){
+        var dia = '0' + data.getDate().toString();
+      }else{
+        var dia = data.getDate().toString();
+      }
+
+      if((mes + 1) < 10){
+        var mes = '0' + (data.getMonth() + 1).toString();
+      }else{
+        var mes = (data.getMonth() + 1).toString();
+      }
+
       var dia = (dia+mes+ano);
 
       var login = function(value){
@@ -91,7 +104,7 @@ angular.module('starter.service', [])
     }//fim do método logar
 
     var criar = function(data){
-      $http.post('http://ccuanexos.herokuapp.com/vistorias/', data).then(function(res){
+      $http.post('http://ccuanexos.herokuapp.com/autorizado/', data).then(function(res){
         //console.log(res.data)
       }), function(err){
         alert('Sem conexão!!!');
@@ -138,7 +151,7 @@ angular.module('starter.service', [])
           var data = Date();
           set(lat, long, data);
          
-      }, function(err) {console.log('Impossível geolocalizar.');})
+      }, function(err) {alert('Impossível geolocalizar.');})
   }
 
   return {
@@ -165,5 +178,61 @@ angular.module('starter.service', [])
       setPontos: setPontos,
       getPontos: getPontos
     }
+
+}])
+
+.factory('factoryVistoria', ['$http', '$state', function($http, $state){
+
+
+  var vistoria = 
+{
+  ordem: '',
+  agente: '',
+  matricula: '',
+  numero: '',
+  servico: '',
+  acao: '',
+  comentario: '',
+  hora: '',
+  latitude: 0,
+  longitude: 0
+}
+
+
+var set = function(ordem, agente, matricula, numero, servico, acao, comentario, hora,  latitude, longitude){
+    return vistoria = 
+    {
+      ordem: (ordem || ''),
+      agente: agente,
+      matricula: matricula,
+      numero: (numero || ''),
+      servico: (servico || ''),
+      acao: (acao || ''),
+      comentario: (comentario || ''),
+      hora: (hora || ''),
+      latitude: (latitude || 0),
+      longitude: (longitude || 0)
+    }
+  
+}
+
+
+var get = function(){
+  return vistoria;
+}
+
+var save = function(data){
+  $http.post('http://ccuanexos.herokuapp.com/vistoria/', data).then(function successCallback(response) {
+    $state.go('assentamento');
+  }, function errorCallback(response) {
+    alert('Não foi possível salvar, tente novamente.');
+  });
+}
+
+return {
+  get: get,
+  set: set,
+  save: save
+}
 
 }])

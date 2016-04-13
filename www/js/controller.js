@@ -28,8 +28,10 @@ angular.module('starter.controllers', [])
           loginFactory.criar(factoryAutorizado.get());
           $scope.multa = '';
           $scope.lista = '';
+          document.getElementById('artigo').selectedIndex = 0;
+          document.getElementById('inciso').selectedIndex = 0;
           $state.go('assentamento');
-          console.log(factoryAutorizado.get())
+          
       }
 
       $scope.confirm = function(){
@@ -52,12 +54,79 @@ angular.module('starter.controllers', [])
 
 }])
 
+.controller('vistoriaCtrl', ['$http','factoryVistoria', '$scope', 'factoryAgente', 'factoryLocaliza', '$cordovaCamera', function($http, factoryVistoria, $scope, factoryAgente, factoryLocaliza, $cordovaCamera){
+  $scope.testar = function(){
+    var agente = factoryAgente.get();
+    var local = factoryLocaliza.get();
+    var numero = document.getElementById('numero').value;
+    var servico = document.getElementById('servico').value;
+    var acao = document.getElementById('acao').value;
+    var comentario = document.getElementById('comentarios').value;
+
+
+    vistoria = 
+    {
+      numero: (numero || ''),
+      servico: (servico || ''),
+      acao: (acao || ''),
+      comentario: (comentario || ''),
+      hora: (local.hora || ''),
+      latitude: (local.latitude || 0),
+      longitude: (local.longitude || 0)
+    }
+    
+    factoryVistoria.set(agente.ordem, agente.nome, agente.matricula, vistoria.numero, vistoria.servico, vistoria.acao, vistoria.comentario, vistoria.hora, vistoria.latitude, vistoria.longitude);
+    factoryVistoria.save(factoryVistoria.get());
+  }
+
+  $scope.tirarFoto = function(){
+     var options =
+    {
+          quality: 100,
+          destinationType: Camera.DestinationType.DATA_URL,
+          sourceType: Camera.PictureSourceType.CAMERA,
+          allowEdit: true,
+          encodingType: Camera.EncodingType.JPEG,
+          targetWidth: 300,
+          targetHeight: 300,
+          popoverOptions: CameraPopoverOptions,
+          saveToPhotoAlbum: true,
+          correctOrientation: false
+    };
+
+
+    $cordovaCamera.getPicture(options)
+    .then(function(data){
+     var agente = factoryAgente.get();
+     var documento = document.getElementById('numero').value;
+
+      var foto = 
+        {
+          agente: agente.nome,
+          ordem: agente.ordem,
+          data: agente.data,
+          documento: documento,
+          foto: data
+        }
+
+      var promisse = $http.post('https://ccuanexos.herokuapp.com/imagem', foto);
+      promisse.then(function(data){
+      })
+
+    }, function(err){
+      alert('Não foi possível salvar a foto, tente novamente.')
+    })
+  }
+
+}])
+
 .controller('loginCtrl', ['$scope',  '$state', 'loginFactory', function($scope, $state, loginFactory){
     $scope.entrar = function(){
       loginFactory.logar();             
     }//fim do método entrar
   
 }])
+
 
 .controller('assentamentoCtrl', ['$scope', 'factoryAutorizado', '$state', 'tipificaService', 'loginFactory', 'factoryAgente', 'factoryLocaliza', 'factoryPontos', function($scope,  factoryAutorizado, $state, tipificaService, loginFactory, factoryAgente, factoryLocaliza, factoryPontos){
       $scope.titulo = factoryAgente.getOrdem();
@@ -88,20 +157,27 @@ angular.module('starter.controllers', [])
     };//fim do método limpar
 
     $scope.selecionar = function(){
-        if (document.getElementById('status').value == 'CONFORMIDADE') {
-            $scope.clickConformidade = true;
-            $scope.clickInconformidade = false;
-            $scope.clickEncerrar = false;
-        }else{
+        if (document.getElementById('status').value == 'INCONFORMIDADE') {
             $scope.clickConformidade = false;
             $scope.clickInconformidade = true;
             $scope.clickEncerrar = false;
-        }
-
-        if (!document.getElementById('status').value){
+            $scope.clickVistoria = false;
+        }else if (document.getElementById('status').value == 'VISTORIA'){
+            $scope.clickConformidade = false;
+            $scope.clickInconformidade = false;
+            $scope.clickEncerrar = false;
+            $scope.clickVistoria = true
+        }else if (!document.getElementById('status').value){
             $scope.clickInconformidade = false;
             $scope.clickConformidade = false;
             $scope.clickEncerrar = true;
+            $scope.clickVistoria = false;
+
+        }else{
+            $scope.clickConformidade = true;
+            $scope.clickInconformidade = false;
+            $scope.clickEncerrar = false;
+            $scope.clickVistoria = false;
         }
     };//fim do método selecionar
 
@@ -110,12 +186,14 @@ angular.module('starter.controllers', [])
       
       var flag;
       if(document.getElementById('status').value === 'INCONFORMIDADE'){
-        flag = false;
+        flag = 'INCONFORME';
         factoryAutorizado.setEstado(flag);
-      }else{
-        flag = true;
+      }else if(document.getElementById('status').value === 'CONFORMIDADE'){
+        flag = 'CONFORME';
         factoryAutorizado.setEstado(flag);
-        
+      }else {
+        flag = 'AUSENTE';
+        factoryAutorizado.setEstado(flag);
       }
 
     }//fim dda função conformidade
@@ -152,6 +230,12 @@ angular.module('starter.controllers', [])
       //teste
         //loginFactory.logar();
     };//fim do método testar
+
+    $scope.vistoriar = function(){
+    factoryLocaliza.localiza();
+    $state.go('vistoria')
+
+  }//fim do método vistoriar
 
     $scope.encerrar = function(){
       $state.go('login');

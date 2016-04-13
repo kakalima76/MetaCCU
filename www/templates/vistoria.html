@@ -1,0 +1,61 @@
+<ion-view>
+
+ <ion-header-bar class="bar bar-header bar-positive">
+      <h1 class="title"><center>VISTORIA</center></h1>
+ </ion-header-bar>
+
+<ion-content>
+<label class="item item-input" >
+<input id="numero" type="text" placeholder="número" ng-model="numero">
+</label>
+
+      <div class="list">
+	    	<label class="item item-input item-select">
+          <div class="input-label">
+          Serviço:
+          </div>
+          <select ng-model="servico"  id="servico">
+            <option></option>
+            <option>ouvidoria</option>
+            <option>1746</option>
+            <option>processo</option>
+            <option>ofício</option>
+            <option>Centro para todos</option>
+          </select>
+        </label>
+        <label class="item item-input item-select">
+                <div class="input-label">
+                Ação:
+                </div>
+                    <select ng-model="acao"  id="acao">
+                        <option></option>
+                        <option>autorizado e autuado</option>
+                        <option>autorizado e notificado</option>
+                        <option>autorizado em conformidade</option>
+                        <option>autorizado e apreendido </option>
+                        <option>irregular e autuado</option>
+                        <option>irregular e notificado</option>
+                        <option>irregular e apreendido </option>
+                        <option>não localizado</option>
+                    </select>
+
+
+            <!-- textbox de entrada do número do serviço-->        
+            </label>
+            
+    <label class="item item-input">
+    <textarea id="comentarios" placeholder="Comentários" ng-model='comentarios'></textarea>
+  	</label>
+
+  	<button class="button button-full button-assertive" ng-click='testar()'>
+  	Salvar
+	</button>
+
+	<button class="button button-full button-assertive" ng-click="tirarFoto()">
+  	Fotografar
+	</button>
+
+      </div>
+
+</ion-content>
+</ion-view>
