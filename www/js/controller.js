@@ -341,7 +341,16 @@ angular.module('starter.controllers', [])
                                       var titular = nome[0].replace('Nome', '').replace('Data', '').trim();
                                       var cpf = cpfTitular[0].replace('CPF', '').trim();
                                       var local = localTitular[0].replace('Local', '').replace('nº', '').trim();
-                                      var situacao = statusTitular[0].replace('Situação', '').replace('TITULAR', '').trim() + ' (ÚLT. TUAP PAGA: ' + tuap[0].substring(10,20)+')';
+
+                                      if(tuap){
+                                        var situacao = statusTitular[0].replace('Situação', '').replace('TITULAR', '').trim() + ' (ÚLT. TUAP PAGA: ' + (tuap[0].substring(10,20) || '') +')';
+                                      }else{
+                                        var situacao = statusTitular[0].replace('Situação', '').replace('TITULAR', '').trim()
+                                      }
+                                      
+                                      
+
+
                                       document.getElementById('situacao').value = situacao;
                                       
                                            if(nome[01]){
@@ -350,7 +359,7 @@ angular.module('starter.controllers', [])
                                             document.getElementById('preposto').value =  nome[1].replace('Nome', '').replace('Data', '').trim();
                                           }else{
                                             var preposto = 'SEM PREPOSTO';
-                                            set(value, titular, preposto, cpf, local, situacao, false);
+                                            set(value, titular, preposto, cpf, local, situacao, '');
                                             document.getElementById('preposto').value = 'SEM PREPOSTO';
                                           }
                                     }else{
